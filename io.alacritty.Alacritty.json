@@ -1,0 +1,47 @@
+{
+  "app-id": "io.alacritty.Alacritty",
+  "runtime": "org.freedesktop.Platform",
+  "runtime-version": "19.08",
+  "sdk": "org.freedesktop.Sdk",
+  "sdk-extensions": ["org.freedesktop.Sdk.Extension.rust-stable"],
+  "command": "alacritty",
+  "finish-args": [
+    "--share=ipc",
+    "--socket=fallback-x11",
+    "--socket=wayland",
+    "--device=dri",
+    "--filesystem=host",
+    "--share=network",
+    "--talk-name=org.freedesktop.Flatpak"
+  ],
+  "build-options": {
+    "append-path": "/usr/lib/sdk/rust-stable/bin",
+    "env": {
+      "CARGO_HOME": "/run/build/alacritty/cargo"
+    }
+  },
+  "rename-icon": "Alacritty",
+  "modules": [
+    {
+      "name": "alacritty",
+      "buildsystem": "simple",
+      "build-commands": [
+        "cargo --offline fetch --manifest-path Cargo.toml --verbose",
+        "cargo --offline build --release --verbose",
+        "install -Dm755 ./target/release/alacritty -t /app/bin/",
+        "install -Dm644 ./extra/linux/${FLATPAK_ID}.appdata.xml -t /app/share/metainfo/",
+        "install -Dm644 ./extra/linux/Alacritty.desktop -T /app/share/applications/${FLATPAK_ID}.desktop",
+        "install -Dm644 ./extra/logo/alacritty-term.svg -T /app/share/icons/hicolor/scalable/apps/Alacritty.svg"
+      ],
+      "sources": [
+        {
+          "type": "git",
+          "url": "https://github.com/alacritty/alacritty",
+          "tag": "v0.4.2",
+          "commit": "f68de375b67d18f6ea5940e9e93ada1ed4e03caf"
+        },
+        "cargo-sources.json"
+      ]
+    }
+  ]
+}
